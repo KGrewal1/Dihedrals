@@ -1,5 +1,3 @@
-! EXTRACTMIN 1
-comment SLURM
 TEMPERATURE 0.592
 EXEC ~/bin/OPTIM
 NATOMS 75
@@ -7,33 +5,6 @@ PLANCK  9.536D-14
 CYCLES 0
 DUMPDIHEDRAL
 COPYFILES min.in coords.prmtop coords.inpcrd
-comment DIJINITCONT EXP
-comment RETAINSP
-comment DIJPRUNE EXP
-comment PRUNECYCLES 5
-comment IGNOREPAIRS TRUE
-comment SHORTCUT 1 BARRIER
-comment UNTRAP 0.1 3.0
-comment EXTRACTMIN 1746
-comment REMOVEUNCONNECTED
-comment NCONNMIN 1
-comment UNTRAP 2.0 5.0
-comment DIJKSTRA 0
-comment EXTRACTMIN 406626
-comment CONNECTREGION 348 827
-comment CONNECTUNC LOWEST 3
-comment READMIN min.data.info.initial
-comment STARTFROMPATH path.info.initial
-comment ADDPATH path.info.initial
-comment MERGEDB ./FunnelSampling
-comment MAXBARRIER 25.0
-comment NOFRQS
-comment CONNECTUNC LOWEST 2
-! REMOVEUNCONNECTED
-comment REMOVESP
-comment ADDPATH path.info.initial
-comment ADDMIN min.data.info.initial
-comment MAXBARRIER 20.0
 ITOL 10.0D0
 GEOMDIFFTOL 0.3D0
 EDIFFTOL 1.0D-4
