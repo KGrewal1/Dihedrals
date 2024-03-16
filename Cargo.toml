@@ -1,0 +1,44 @@
+[workspace]
+resolver = "2"
+members = [ "code/dihedrals2csv","code/parse-dihedrals"
+, "code/parse-tsdata", "code/setup-connections", "code/setup-train", "code/test-connected", "code/train"]
+
+[workspace.dependencies]
+parse-dihedrals = {path = "code/parse-dihedrals"}
+parse-tsdata = {path = "code/parse-tsdata"}
+winnow = "0.6.2"
+candle-core = "0.4"
+candle-nn = "0.4"
+candle-optimisers = "0.4"
+env_logger = "0.11.1"
+log = "0.4.20"
+anyhow = "1.0"
+rand = {version = "0.8.5", features = ["small_rng"]}
+bytemuck = {version = "1.14", features = ["extern_crate_alloc", "min_const_generics", "extern_crate_std"]}
+
+[workspace.lints.clippy]
+pedantic = "warn"
+suspicious = "warn"
+perf = "warn"
+complexity = "warn"
+style = "warn"
+# cargo = "warn"
+imprecise_flops = "warn"
+module_name_repetitions = {level =  "allow", priority = 1}
+uninlined_format_args = {level =  "allow", priority = 1}
+missing_errors_doc = {level =  "allow", priority = 1}
+missing_panics_doc = {level =  "allow", priority = 1}
+# we do acc want floats to be parsed precisely
+float_cmp = {level =  "allow", priority = 1}
+# not that similar
+similar_names = {level =  "allow", priority = 1}
+# fn too line long doesn't really matter for main
+too_many_lines = {level =  "allow", priority = 1}
+
+[workspace.lints.rust]
+non_upper_case_globals = {level =  "allow", priority = 1}
+
+[profile.release]
+debug = true
+lto = true
+codegen-units = 1

@@ -1,0 +1,7 @@
+/target
+*.st
+*.csv
+extracted*
+*.dihedrals
+out.txt
+*.ipynb
