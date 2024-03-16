@@ -1,6 +1,5 @@
 use candle_core::{Result, Tensor};
 use candle_nn::{ops::sigmoid, Conv2d, Linear, VarBuilder};
-use candle_optimisers::Model;
 
 #[derive(Debug)]
 pub struct CheckCxModel {
@@ -22,12 +21,6 @@ impl CheckCxModel {
         let ln1 = candle_nn::linear(356, 712, vs.pp("ln1"))?;
         let ln2 = candle_nn::linear(712, 1, vs.pp("ln2"))?;
         Ok(Self { conv1, ln1, ln2 })
-    }
-}
-
-impl Model for CheckCxModel {
-    fn loss(&self) -> Result<Tensor> {
-        panic!();
     }
 }
 
