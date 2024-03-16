@@ -243,6 +243,7 @@ dependencies = [
 name = "dihedrals2csv"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "parse-dihedrals",
 ]
 

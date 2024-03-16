@@ -27,10 +27,10 @@ class CxModel(nn.Module):
             groups=1,
         )
         self.flatten = nn.Flatten(1, 3)
-        self.linear1 = torch.nn.Linear(356, 712)
+        self.linear1 = torch.nn.Linear(356, 356)
         self.act1 = torch.nn.Tanh()
         self.dropout_2 = nn.Dropout(0.6)
-        self.linear2 = torch.nn.Linear(712, 1)
+        self.linear2 = torch.nn.Linear(356, 1)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):

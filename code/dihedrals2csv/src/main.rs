@@ -1,3 +1,4 @@
+use anyhow::anyhow;
 use parse_dihedrals::Dihedrals;
 use std::{
     fs::{self, File},
@@ -5,14 +6,13 @@ use std::{
     path::Path,
 };
 
-fn main() {
+fn main() -> anyhow::Result<()> {
     let pathsample = Path::new("PATHSAMPLE");
-    let systems: Dihedrals = fs::read_to_string(pathsample.join("min.dihedrals"))
-        .expect("file not found")
-        .parse()
-        .unwrap();
+    let systems = fs::read_to_string(pathsample.join("min.dihedrals"))?
+        .parse::<Dihedrals>()
+        .map_err(|err| anyhow!(err))?;
 
-    let mut file = File::create("min_dihedrals.csv").unwrap();
+    let mut file = File::create("min_dihedrals.csv")?;
     for dihedral in systems {
         let angles = dihedral
             .dihedrals
@@ -20,15 +20,14 @@ fn main() {
             .map(|f| format!("{}", f))
             .collect::<Vec<String>>()
             .join(",");
-        writeln!(file, "{}", angles).unwrap();
+        writeln!(file, "{}", angles)?;
     }
 
-    let systems: Dihedrals = fs::read_to_string(pathsample.join("ts.dihedrals"))
-        .expect("file not found")
-        .parse()
-        .unwrap();
+    let systems = fs::read_to_string(pathsample.join("ts.dihedrals"))?
+        .parse::<Dihedrals>()
+        .map_err(|err| anyhow!(err))?;
 
-    let mut file = File::create("ts_dihedrals.csv").unwrap();
+    let mut file = File::create("ts_dihedrals.csv")?;
     for dihedral in systems {
         let angles = dihedral
             .dihedrals
@@ -36,6 +35,7 @@ fn main() {
             .map(|f| format!("{}", f))
             .collect::<Vec<String>>()
             .join(",");
-        writeln!(file, "{}", angles).unwrap();
+        writeln!(file, "{}", angles)?;
     }
+    Ok(())
 }

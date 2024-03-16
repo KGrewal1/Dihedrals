@@ -13,21 +13,18 @@ const NDIHEDRALS: usize = 178;
 fn main() -> anyhow::Result<()> {
     let pathsample = Path::new("PATHSAMPLE");
 
-    let minima: BTreeMap<usize, Dihedral> = fs::read_to_string(pathsample.join("min.dihedrals"))
-        .expect("file not found")
+    let minima: BTreeMap<usize, Dihedral> = fs::read_to_string(pathsample.join("min.dihedrals"))?
         .parse::<Dihedrals>()
         .map_err(|err| anyhow!(err))?
         .into();
 
     let transition_states: BTreeMap<usize, Dihedral> =
-        fs::read_to_string(pathsample.join("ts.dihedrals"))
-            .expect("file not found")
+        fs::read_to_string(pathsample.join("ts.dihedrals"))?
             .parse::<Dihedrals>()
             .map_err(|err| anyhow!(err))?
             .into();
 
-    let connections = fs::read_to_string(pathsample.join("ts.data"))
-        .expect("file not found")
+    let connections = fs::read_to_string(pathsample.join("ts.data"))?
         .parse::<TransitionStates>()
         .map_err(|err| anyhow!(err))?;
 
