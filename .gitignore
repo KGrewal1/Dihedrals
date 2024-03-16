@@ -5,3 +5,4 @@ extracted*
 *.dihedrals
 out.txt
 *.ipynb
+/.venv
