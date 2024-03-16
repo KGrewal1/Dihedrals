@@ -30,7 +30,7 @@ class CxModel(nn.Module):
         self.linear1 = torch.nn.Linear(356, 712)
         self.act1 = torch.nn.Tanh()
         self.dropout_2 = nn.Dropout(0.6)
-        self.linear3 = torch.nn.Linear(712, 1)
+        self.linear2 = torch.nn.Linear(712, 1)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -40,13 +40,10 @@ class CxModel(nn.Module):
         x = self.dropout_1(x)
         x = self.conv1(x)
         x = self.flatten(x)
-        # x = self.linear0(x)
         x = self.linear1(x)
         x = self.act1(x)
-        # x = self.linear2(x)
-        # x = self.act2(x)
         x = self.dropout_2(x)
-        x = self.linear3(x)
+        x = self.linear2(x)
         x = self.sigmoid(x)
         return x
 
@@ -59,8 +56,8 @@ class CxModel(nn.Module):
         self.conv1.bias = nn.Parameter(loaded["conv1.bias"])
         self.linear1.weight = nn.Parameter(loaded["ln1.weight"])
         self.linear1.bias = nn.Parameter(loaded["ln1.bias"])
-        self.linear3.weight = nn.Parameter(loaded["ln3.weight"])
-        self.linear3.bias = nn.Parameter(loaded["ln3.bias"])
+        self.linear2.weight = nn.Parameter(loaded["ln2.weight"])
+        self.linear2.bias = nn.Parameter(loaded["ln2.bias"])
 
     def save_st(self, file_path: str):
         """
@@ -71,8 +68,8 @@ class CxModel(nn.Module):
         save_data["conv1.bias"] = self.conv1.bias
         save_data["ln1.weight"] = self.linear1.weight
         save_data["ln1.bias"] = self.linear1.bias
-        save_data["ln3.weight"] = self.linear3.weight
-        save_data["ln3.bias"] = self.linear3.bias
+        save_data["ln2.weight"] = self.linear2.weight
+        save_data["ln2.bias"] = self.linear2.bias
         save_file(save_data, file_path)
 
 
@@ -93,7 +90,7 @@ if __name__ == "__main__":
     test_inucx = inputs["testinputucx"].type(torch.FloatTensor).cuda()
     ntestucx = test_inucx.shape[0]
     print(ntestucx)
-    # test_out = inputs["testoutput"].type(torch.FloatTensor).cuda()
+
     # define loss and parameters
     optimizer = optim.NAdam(model.parameters())
     EPOCHS = 20_000
@@ -102,26 +99,13 @@ if __name__ == "__main__":
     scheduler1 = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
     lossfn = nn.BCELoss()
     for i in range(EPOCHS):
-        # for i in range(1):
-        # prepare input data
-        # data = torch.ones(1,1,28,28).bfloat16().cuda()
-        # data.to(torch.float32)
-        # print(data.dtype)
-        # print(data.shape)
-        # inputs = torch.reshape(data,(-1, 784)) # -1 can be any value. So when reshape,
-        # it will satisfy 784 first
 
         # set gradient to zero
         optimizer.zero_grad()
 
         # feed inputs into model
         pred_data = model.forward(train_in)
-        # print(recon_x)
-        # print(recon_x.shape)
-        # print(recon_x.shape)
 
-        # calculating loss
-        # print(pred_data)
         loss = lossfn(pred_data, train_out)
 
         # calculate gradient of each parameter

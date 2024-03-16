@@ -6,7 +6,7 @@ use candle_optimisers::Model;
 pub struct CheckCxModel {
     conv1: Conv2d,
     ln1: Linear,
-    ln3: Linear,
+    ln2: Linear,
 }
 
 impl CheckCxModel {
@@ -20,9 +20,8 @@ impl CheckCxModel {
         };
         let conv1 = candle_nn::conv2d(1, 1, 3, conv_config, vs.pp("conv1"))?;
         let ln1 = candle_nn::linear(356, 712, vs.pp("ln1"))?;
-        let ln3 = candle_nn::linear(712, 1, vs.pp("ln3"))?;
-        // let ln4 = candle_nn::linear(16, LABELS, vs.pp("ln4"))?;
-        Ok(Self { conv1, ln1, ln3 })
+        let ln2 = candle_nn::linear(712, 1, vs.pp("ln2"))?;
+        Ok(Self { conv1, ln1, ln2 })
     }
 }
 
@@ -40,7 +39,7 @@ impl CheckCxModel {
             .flatten_from(1)?
             .apply(&self.ln1)?
             .tanh()?
-            .apply(&self.ln3)?
+            .apply(&self.ln2)?
             .apply(&sigmoid)
     }
 }

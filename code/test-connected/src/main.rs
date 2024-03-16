@@ -13,7 +13,7 @@ fn main() -> anyhow::Result<()> {
     let pathsample = Path::new("PATHSAMPLE");
 
     let dev = candle_core::Device::cuda_if_available(0)?;
-    let model = setup_model::setup_connection()?.0;
+    let model = setup_model::setup_connection()?;
     let minima: Vec<Dihedral> = fs::read_to_string(pathsample.join("min.dihedrals"))
         .expect("file not found")
         .parse::<Dihedrals>()

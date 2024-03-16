@@ -27,13 +27,10 @@ class MyModel(nn.Module):
             groups=1,
         )
         self.flatten = nn.Flatten(1, 3)
-        # self.linear0 = torch.nn.Linear(356, 1424)
         self.linear1 = torch.nn.Linear(356, 712)
         self.act1 = torch.nn.Tanh()
-        # self.linear2 = torch.nn.Linear(712, 356)
-        self.act2 = torch.nn.Tanh()
         self.dropout_2 = nn.Dropout(0.2)
-        self.linear3 = torch.nn.Linear(712, 178)
+        self.linear2 = torch.nn.Linear(712, 178)
 
     def forward(self, x):
         """
@@ -42,13 +39,10 @@ class MyModel(nn.Module):
         x = self.dropout_1(x)
         x = self.conv1(x)
         x = self.flatten(x)
-        # x = self.linear0(x)
         x = self.linear1(x)
         x = self.act1(x)
-        # x = self.linear2(x)
-        x = self.act2(x)
         x = self.dropout_2(x)
-        x = self.linear3(x)
+        x = self.linear2(x)
         return x
 
     def load_st(self, file_path: str):
@@ -60,10 +54,8 @@ class MyModel(nn.Module):
         self.conv1.bias = nn.Parameter(loaded["conv1.bias"])
         self.linear1.weight = nn.Parameter(loaded["ln1.weight"])
         self.linear1.bias = nn.Parameter(loaded["ln1.bias"])
-        # self.linear2.weight = nn.Parameter(loaded["ln2.weight"])
-        # self.linear2.bias = nn.Parameter(loaded["ln2.bias"])
-        self.linear3.weight = nn.Parameter(loaded["ln3.weight"])
-        self.linear3.bias = nn.Parameter(loaded["ln3.bias"])
+        self.linear2.weight = nn.Parameter(loaded["ln2.weight"])
+        self.linear2.bias = nn.Parameter(loaded["ln2.bias"])
 
     def save_st(self, file_path: str):
         """
@@ -75,10 +67,8 @@ class MyModel(nn.Module):
         save_data["conv1.bias"] = self.conv1.bias
         save_data["ln1.weight"] = self.linear1.weight
         save_data["ln1.bias"] = self.linear1.bias
-        # save_data["ln2.weight"] = self.linear2.weight
-        # save_data["ln2.bias"]= self.linear2.bias
-        save_data["ln3.weight"] = self.linear3.weight
-        save_data["ln3.bias"] = self.linear3.bias
+        save_data["ln2.weight"] = self.linear2.weight
+        save_data["ln2.bias"] = self.linear2.bias
         save_file(save_data, file_path)
 
 
