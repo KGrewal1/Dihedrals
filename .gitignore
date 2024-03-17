@@ -6,3 +6,4 @@ extracted*
 out.txt
 *.ipynb
 /.venv
+connectpairs
