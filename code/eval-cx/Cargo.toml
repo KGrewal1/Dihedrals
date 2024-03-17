@@ -1,5 +1,5 @@
 [package]
-name = "setup-train"
+name = "eval-cx"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,8 +9,14 @@ edition = "2021"
 parse-dihedrals = {workspace = true}
 parse-tsdata = {workspace = true}
 candle-core = {workspace = true}
+candle-nn = {workspace = true}
+connection-network = {workspace = true}
 rand = {workspace = true}
 anyhow = {workspace = true}
+bytemuck = {workspace = true}
+log = {workspace = true}
+env_logger = {workspace = true}
+rayon = {workspace = true}
 
 [lints]
 workspace = true

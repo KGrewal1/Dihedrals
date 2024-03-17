@@ -56,9 +56,9 @@ fn main() -> anyhow::Result<()> {
                 // unconnected
                 if cx.is_none() {
                     // unconnected misidentified
-                    if pred > 0.5 {
+                    if 0.5 < pred {
                         // unconnected w 'high' likelihood of being connected
-                        if pred > 0.9999 {
+                        if 0.9999 < pred {
                             info!("prob {}", pred);
                             println!("{} {}", min_1, min_2);
                         }
@@ -68,12 +68,12 @@ fn main() -> anyhow::Result<()> {
                         (0, 1, 0, 0)
                     }
                 } else {
-                    // connected misidentified as unconnected
-                    if pred < 0.5 {
-                        (1, 0, 1, 0)
-                    } else {
-                        // connected identified as connected
+                    // connected identified as connected
+                    if 0.5 < pred {
                         (1, 0, 0, 0)
+                    } else {
+                        // connected misidentified as unconnected
+                        (1, 0, 1, 0)
                     }
                 }
             } else {

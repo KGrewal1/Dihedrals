@@ -11,21 +11,15 @@ parse-tsdata = {workspace = true}
 candle-core = {workspace = true}
 candle-nn = {workspace = true}
 connection-network = {workspace = true}
-rand = {workspace = true}
 anyhow = {workspace = true}
-bytemuck = {workspace = true}
 log = {workspace = true}
 env_logger = {workspace = true}
 rayon = {workspace = true}
 
 [features]
 default = []
-# as we only do inference on one data point at a time, running on CPU appears to be faster
-# than overhead of copying to GPU
-# this may not be true if they share memory (metal)s
-
-# cuda = ["candle-core/cuda", "candle-nn/cuda", "candle-optimisers/cuda"]
-# cudnn = ["cuda", "candle-core/cudnn"]
+cuda = ["candle-core/cuda", "candle-nn/cuda"]
+cudnn = ["cuda", "candle-core/cudnn"]
 
 [lints]
 workspace = true

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = [ "code/connection-network", "code/dihedrals2csv","code/parse-dihedrals"
+members = [ "code/connection-network", "code/dihedrals2csv", "code/eval-cx","code/parse-dihedrals"
 , "code/parse-tsdata", "code/setup-connections", "code/setup-train", "code/test-connected", "code/train"]
 
 [workspace.dependencies]

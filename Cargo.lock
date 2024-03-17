@@ -191,6 +191,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "acbf1af155f9b9ef647e42cdc158db4b64a1b61f743629225fde6f3e0be2a7c7"
 
 [[package]]
+name = "connection-network"
+version = "0.1.0"
+dependencies = [
+ "candle-core",
+ "candle-nn",
+]
+
+[[package]]
 name = "crc32fast"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -296,6 +304,23 @@ dependencies = [
  "env_filter",
  "humantime",
  "log",
+]
+
+[[package]]
+name = "eval-cx"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "candle-core",
+ "candle-nn",
+ "connection-network",
+ "env_logger",
+ "log",
+ "parse-dihedrals",
+ "parse-tsdata",
+ "rand",
+ "rayon",
 ]
 
 [[package]]
@@ -770,7 +795,6 @@ dependencies = [
  "anyhow",
  "bytemuck",
  "candle-core",
- "candle-nn",
  "parse-dihedrals",
  "parse-tsdata",
  "rand",
@@ -782,7 +806,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "candle-core",
- "candle-nn",
  "parse-dihedrals",
  "parse-tsdata",
  "rand",
@@ -835,15 +858,13 @@ name = "test-connected"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "bytemuck",
  "candle-core",
  "candle-nn",
- "candle-optimisers",
+ "connection-network",
  "env_logger",
  "log",
  "parse-dihedrals",
  "parse-tsdata",
- "rand",
  "rayon",
 ]
 
