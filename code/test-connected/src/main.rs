@@ -7,7 +7,7 @@ use parse_tsdata::TransitionStates;
 use rayon::prelude::*;
 use std::{collections::BTreeMap, fs, path::Path};
 
-mod nn_arch;
+// mod nn_arch;
 mod setup_model;
 const NDIHEDRALS: usize = 178;
 

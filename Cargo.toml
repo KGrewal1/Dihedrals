@@ -1,11 +1,12 @@
 [workspace]
 resolver = "2"
-members = [ "code/dihedrals2csv","code/parse-dihedrals"
+members = [ "code/connection-network", "code/dihedrals2csv","code/parse-dihedrals"
 , "code/parse-tsdata", "code/setup-connections", "code/setup-train", "code/test-connected", "code/train"]
 
 [workspace.dependencies]
 parse-dihedrals = {path = "code/parse-dihedrals"}
 parse-tsdata = {path = "code/parse-tsdata"}
+connection-network = {path = "code/connection-network"}
 winnow = "0.6.2"
 candle-core = "0.4"
 candle-nn = "0.4"
