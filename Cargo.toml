@@ -15,6 +15,7 @@ log = "0.4.20"
 anyhow = "1.0"
 rand = {version = "0.8.5", features = ["small_rng"]}
 bytemuck = {version = "1.14", features = ["extern_crate_alloc", "min_const_generics", "extern_crate_std"]}
+rayon = "1.9"
 
 [workspace.lints.clippy]
 pedantic = "warn"

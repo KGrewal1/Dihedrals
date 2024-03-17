@@ -844,6 +844,7 @@ dependencies = [
  "parse-dihedrals",
  "parse-tsdata",
  "rand",
+ "rayon",
 ]
 
 [[package]]
