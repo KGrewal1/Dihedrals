@@ -31,7 +31,7 @@ fn main() -> anyhow::Result<()> {
 
     // let raw = Vec::from_raw_parts();
     minima.iter().enumerate().for_each(|(i, min_1)| {
-        minima.iter().skip(i).for_each(|min_2| {
+        minima.iter().skip(i + 1).for_each(|min_2| {
             let cx = connections.get(&(min_1.id, min_2.id));
             if cx.is_some() {
                 connected_mins.extend(min_1.dihedrals.iter());
