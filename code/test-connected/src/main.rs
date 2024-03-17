@@ -53,24 +53,31 @@ fn main() -> anyhow::Result<()> {
         .map(|(min_1, min_2, pred)| {
             if let Ok(pred) = pred {
                 let cx = connections.get(&(min_1, min_2));
+                // unconnected
                 if cx.is_none() {
+                    // unconnected misidentified
                     if pred > 0.5 {
+                        // unconnected w 'high' likelihood of being connected
                         if pred > 0.9999 {
                             info!("prob {}", pred);
                             println!("{} {}", min_1, min_2);
                         }
                         (0, 1, 0, 1)
                     } else {
+                        // unconnected identified as unconnected
                         (0, 1, 0, 0)
                     }
                 } else {
+                    // connected misidentified as unconnected
                     if pred < 0.5 {
                         (1, 0, 1, 0)
                     } else {
+                        // connected identified as connected
                         (1, 0, 0, 0)
                     }
                 }
             } else {
+                // prediction is in error state
                 warn!("failed prediction for {} {} {:?}", min_1, min_2, pred);
                 (0, 0, 0, 0)
             }
