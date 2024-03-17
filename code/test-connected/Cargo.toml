@@ -14,7 +14,8 @@ candle-optimisers = {workspace = true}
 rand = {workspace = true}
 anyhow = {workspace = true}
 bytemuck = {workspace = true}
-
+log = {workspace = true}
+env_logger = {workspace = true}
 
 [features]
 default = []

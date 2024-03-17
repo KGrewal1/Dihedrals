@@ -839,6 +839,8 @@ dependencies = [
  "candle-core",
  "candle-nn",
  "candle-optimisers",
+ "env_logger",
+ "log",
  "parse-dihedrals",
  "parse-tsdata",
  "rand",

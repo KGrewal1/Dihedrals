@@ -1,5 +1,7 @@
 use anyhow::anyhow;
 use candle_core::Tensor;
+use env_logger::Builder;
+use log::{info, LevelFilter};
 use parse_dihedrals::{Dihedral, Dihedrals};
 use parse_tsdata::TransitionStates;
 use std::{collections::BTreeMap, fs, path::Path};
@@ -7,9 +9,16 @@ use std::{collections::BTreeMap, fs, path::Path};
 mod nn_arch;
 mod setup_model;
 const NDIHEDRALS: usize = 178;
-const NCX: usize = 100;
+const NCX: usize = 300_000;
 
 fn main() -> anyhow::Result<()> {
+    let mut builder = Builder::new();
+    builder.format_target(false);
+    builder.format_timestamp(None);
+    builder.format_level(false);
+    builder.filter(None, LevelFilter::Info);
+    builder.init();
+
     let pathsample = Path::new("PATHSAMPLE");
 
     let dev = candle_core::Device::cuda_if_available(0)?;
@@ -49,7 +58,8 @@ fn main() -> anyhow::Result<()> {
                     count_ucx_miss += 1;
                 }
                 if pred > 0.9999 {
-                    println!("{} {} {}", min_1.id, min_2.id, pred);
+                    info! {"prob {}", pred};
+                    println!("{} {}", min_1.id, min_2.id);
                     count += 1;
                     if count > NCX {
                         break 'outer;
@@ -67,7 +77,7 @@ fn main() -> anyhow::Result<()> {
         //     break;
         // }
     }
-    println!(
+    info!(
         "count_cx: {}, count_ucx: {}, count_ucx_miss: {}, count_cx_miss: {}",
         count_cx, count_ucx, count_ucx_miss, count_cx_miss
     );
