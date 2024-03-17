@@ -99,7 +99,6 @@ if __name__ == "__main__":
     scheduler1 = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
     lossfn = nn.BCELoss()
     for i in range(EPOCHS):
-
         # set gradient to zero
         optimizer.zero_grad()
 
@@ -146,4 +145,4 @@ if __name__ == "__main__":
             scheduler1.step()
 
     print("====Training finish====")
-    model.save_st("connection_pred_Weights.st")
+    model.save_st("connection_pred_weights.st")
