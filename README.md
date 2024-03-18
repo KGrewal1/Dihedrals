@@ -6,6 +6,8 @@ Python notebooks (will change to .py) require safetensors and pytorch
 
 Rust code requires rust toolchain to compile.
 
+`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+
 There are 5 rust executables:
 
 * `dihedrals2csv` reformats the dihedral data into a csv file
