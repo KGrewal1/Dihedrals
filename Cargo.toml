@@ -36,6 +36,7 @@ float_cmp = {level =  "allow", priority = 1}
 similar_names = {level =  "allow", priority = 1}
 # fn too line long doesn't really matter for main
 too_many_lines = {level =  "allow", priority = 1}
+cast_precision_loss = {level =  "allow", priority = 1}
 
 [workspace.lints.rust]
 non_upper_case_globals = {level =  "allow", priority = 1}
