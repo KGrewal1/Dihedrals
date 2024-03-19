@@ -2,7 +2,8 @@ use anyhow::{anyhow, Context};
 use candle_core::{Result, Tensor};
 use parse_dihedrals::{Dihedral, Dihedrals};
 use parse_tsdata::TransitionStates;
-use rand::{rngs::SmallRng, seq::SliceRandom, SeedableRng};
+use rand::{seq::SliceRandom, SeedableRng};
+use rand_xoshiro::Xoshiro256StarStar;
 use std::{
     collections::{BTreeMap, HashMap},
     fs,
@@ -39,7 +40,7 @@ fn main() -> anyhow::Result<()> {
     tt_mask.resize(ntrain, true);
     tt_mask.resize(connections.len(), false);
 
-    let mut rng: SmallRng = SeedableRng::seed_from_u64(42);
+    let mut rng: Xoshiro256StarStar = SeedableRng::seed_from_u64(42);
     tt_mask.shuffle(&mut rng);
     for (connection, mask) in connections.into_iter().zip(tt_mask) {
         let (ts, min_1, min_2) = (connection.ts, connection.min1, connection.min2);

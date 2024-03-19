@@ -14,7 +14,8 @@ candle-optimisers = "0.4"
 env_logger = "0.11.1"
 log = "0.4.20"
 anyhow = "1.0"
-rand = {version = "0.8.5", features = ["small_rng"]}
+rand = {version = "0.8.5"}
+rand_xoshiro = "0.6.0"
 bytemuck = {version = "1.14", features = ["extern_crate_alloc", "min_const_generics", "extern_crate_std"]}
 rayon = "1.9"
 
