@@ -1,4 +1,4 @@
-use anyhow::anyhow;
+use anyhow::{anyhow, Context};
 use candle_core::Tensor;
 use parse_dihedrals::{Dihedral, Dihedrals};
 use parse_tsdata::TransitionStates;
@@ -25,78 +25,76 @@ fn main() -> anyhow::Result<()> {
             .map_err(|err| anyhow!(err))?
             .into();
 
-    let mut connected_mins: Vec<f64> = Vec::with_capacity(2 * NDIHEDRALS * connections.len());
-    let mut unconnected_mins: Vec<f64> = Vec::with_capacity(
-        minima.len() * minima.len() * NDIHEDRALS * 2 - connected_mins.capacity(),
-    );
+    let mut connected_mins: Vec<(usize, usize)> = Vec::with_capacity(2 * connections.len());
+    let mut unconnected_mins: Vec<(usize, usize)> = Vec::with_capacity(minima.len() * minima.len());
 
-    // let raw = Vec::from_raw_parts();
-    minima.iter().enumerate().for_each(|(i, min_1)| {
-        minima.iter().skip(i + 1).for_each(|min_2| {
-            let cx = connections.get(&(min_1.id, min_2.id));
+    (1..=minima.len()).for_each(|i| {
+        (i + 1..=minima.len()).for_each(|j| {
+            let cx = connections.get(&(i, j));
             if cx.is_some() {
-                connected_mins.extend(min_1.dihedrals.iter());
-                connected_mins.extend(min_2.dihedrals.iter());
-                connected_mins.extend(min_2.dihedrals.iter());
-                connected_mins.extend(min_1.dihedrals.iter());
+                connected_mins.push((i, j));
+                connected_mins.push((j, i));
             } else {
-                unconnected_mins.extend(min_1.dihedrals.iter());
-                unconnected_mins.extend(min_2.dihedrals.iter());
-                unconnected_mins.extend(min_2.dihedrals.iter());
-                unconnected_mins.extend(min_1.dihedrals.iter());
+                unconnected_mins.push((i, j));
+                unconnected_mins.push((j, i));
             }
-        });
+        })
     });
-
-    let connected_mins: Vec<[f64; 2 * NDIHEDRALS]> =
-        bytemuck::try_cast_vec(connected_mins).map_err(|err| err.0)?;
-
-    let mut unconnected_mins: Vec<[f64; 2 * NDIHEDRALS]> =
-        bytemuck::try_cast_vec(unconnected_mins).map_err(|err| err.0)?;
 
     println!("Connected: {}", connected_mins.len());
     println!("Unconnected: {}", unconnected_mins.len());
 
-    let mut tt_mask: Vec<bool> = Vec::with_capacity(connected_mins.len());
     let ntrain = 8000;
     let ntest_cx = connected_mins.len() - ntrain;
     let ntest_ucx = 250_000;
-    tt_mask.resize(ntrain, true);
-    tt_mask.resize(connected_mins.len(), false);
 
     let mut rng: Xoshiro256StarStar = SeedableRng::seed_from_u64(42);
-    tt_mask.shuffle(&mut rng);
-    let mut cx_train: Vec<[f64; 2 * NDIHEDRALS]> = Vec::with_capacity(ntrain);
-    let mut cx_test: Vec<[f64; 2 * NDIHEDRALS]> = Vec::with_capacity(ntest_cx);
-
-    for (min_pair, mask) in connected_mins.into_iter().zip(tt_mask.iter()) {
-        if *mask {
-            cx_train.push(min_pair);
-        } else {
-            cx_test.push(min_pair);
-        }
-    }
-
-    tt_mask.shuffle(&mut rng);
+    // shuffle the orders for randomness
+    connected_mins.shuffle(&mut rng);
     unconnected_mins.shuffle(&mut rng);
-    let ucx_test: Vec<[f64; 2 * NDIHEDRALS]> = unconnected_mins.drain(0..ntest_ucx).collect();
-    let mut ucx_train: Vec<[f64; 2 * NDIHEDRALS]> = Vec::with_capacity(ntrain);
 
-    for (min_pair, mask) in unconnected_mins.into_iter().zip(tt_mask.iter()) {
-        if *mask {
-            ucx_train.push(min_pair);
-        }
+    let (cx_train, cx_test) = connected_mins.split_at(ntrain);
+    let (ucx_data, _) = unconnected_mins.split_at(ntrain + ntest_ucx);
+    let (ucx_train, ucx_test) = ucx_data.split_at(ntrain);
+    println!("cx_train: {}", cx_train.len());
+    println!("cx_test: {}", cx_test.len());
+    println!("ucx_train: {}", ucx_train.len());
+    println!("ucx_test: {}", ucx_test.len());
+
+    let minima: BTreeMap<usize, Dihedral> = fs::read_to_string(pathsample.join("min.dihedrals"))?
+        .parse::<Dihedrals>()
+        .map_err(|err| anyhow!(err))?
+        .into();
+
+    let mut connected_mins_train: Vec<f64> = Vec::with_capacity(2 * ntrain * 2 * NDIHEDRALS);
+
+    for (i, j) in cx_train.iter() {
+        connected_mins_train.extend(minima.get(i).context("minima missing")?.dihedrals.iter());
+        connected_mins_train.extend(minima.get(j).context("minima missing")?.dihedrals.iter());
     }
 
-    let mut cx_train: Vec<f64> = bytemuck::try_cast_vec(cx_train).map_err(|err| err.0)?;
+    let mut connected_mins_test: Vec<f64> = Vec::with_capacity(ntest_cx * 2 * NDIHEDRALS);
 
-    let cx_test: Vec<f64> = bytemuck::try_cast_vec(cx_test).map_err(|err| err.0)?;
+    for (i, j) in cx_test.iter() {
+        connected_mins_test.extend(minima.get(i).context("minima missing")?.dihedrals.iter());
+        connected_mins_test.extend(minima.get(j).context("minima missing")?.dihedrals.iter());
+    }
 
-    let ucx_train: Vec<f64> = bytemuck::try_cast_vec(ucx_train).map_err(|err| err.0)?;
+    let mut unconnected_mins_train: Vec<f64> = Vec::with_capacity(ntrain * 2 * NDIHEDRALS);
 
-    let ucx_test: Vec<f64> = bytemuck::try_cast_vec(ucx_test).map_err(|err| err.0)?;
+    for (i, j) in ucx_train.iter() {
+        unconnected_mins_train.extend(minima.get(i).context("minima missing")?.dihedrals.iter());
+        unconnected_mins_train.extend(minima.get(j).context("minima missing")?.dihedrals.iter());
+    }
 
-    cx_train.extend(ucx_train.iter());
+    let mut unconnected_mins_test: Vec<f64> = Vec::with_capacity(ntest_ucx * 2 * NDIHEDRALS);
+
+    for (i, j) in ucx_test.iter() {
+        unconnected_mins_test.extend(minima.get(i).context("minima missing")?.dihedrals.iter());
+        unconnected_mins_test.extend(minima.get(j).context("minima missing")?.dihedrals.iter());
+    }
+
+    connected_mins_train.extend(unconnected_mins_train.iter());
 
     let mut train_vals: Vec<f64> = Vec::with_capacity(2 * ntrain);
     train_vals.resize(ntrain, 1.0);
@@ -109,21 +107,21 @@ fn main() -> anyhow::Result<()> {
     test_vals_ucx.resize(ntest_ucx, 0.0);
 
     let train_input = Tensor::from_slice(
-        &cx_train,
+        &connected_mins_train,
         (2 * ntrain, 1, 2, NDIHEDRALS),
         &candle_core::Device::Cpu,
     )?
     .to_dtype(candle_core::DType::F32)?;
 
     let test_input_cx = Tensor::from_slice(
-        &cx_test,
+        &connected_mins_test,
         (ntest_cx, 1, 2, NDIHEDRALS),
         &candle_core::Device::Cpu,
     )?
     .to_dtype(candle_core::DType::F32)?;
 
     let test_input_ucx = Tensor::from_slice(
-        &ucx_test,
+        &unconnected_mins_test,
         (ntest_ucx, 1, 2, NDIHEDRALS),
         &candle_core::Device::Cpu,
     )?
