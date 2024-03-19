@@ -28,15 +28,11 @@ Install rust compiler:
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-Build all rust code
-
-```sh
-cargo build --release
-```
-
 #### Python Setup
 
 This presumes that the python environment is python 3: otherwise all python commands should be replaced with `python3`.
+
+* `git clone` this repository and `cd` into it.
 
 * Create a virtual environment
 
@@ -60,14 +56,18 @@ Have a recently compiled version of [PATHSAMPLE](https://www-wales.ch.cam.ac.uk/
 
 ### Running
 
-* `git clone` this repository and `cd` into it.
-
-* create the dihedral data
+* create the dihedral data: from the root of the repository:
 
 ```sh
 cd PATHSAMPLE
 path/to/PATHSAMPLE # run PATHSAMPLE executable
 cd ..
+```
+
+* build all rust code
+
+```sh
+cargo build --release
 ```
 
 * run the rust code to generate the input tensors for training (this will not be the exact same as my results as I've changed the PRNG from when I orginally ran the code: from now on however this should be deterministic)
