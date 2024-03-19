@@ -36,7 +36,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 This presumes that the python environment is python 3: otherwise all python commands should be replaced with `python3`.
 
-Currently it is assumed training is run on a local machine, so the following instructions are for setting up a local environment (I'm not sure how to do the training as a slurm job).
+Currently it is assumed training is run on a local machine, so the following instructions are for setting up a local environment.
 
 * `git clone` this repository and `cd` into it.
 
