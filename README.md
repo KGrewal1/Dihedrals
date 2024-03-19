@@ -1,20 +1,20 @@
 # Dihedrals
 
-This contains rust and python code to predict whether two dihedral configurations are connected by a single transition state (TS), and if they are, what that TS is.
+This repository contains rust and python code to predict whether two dihedral configurations are connected by a single transition state (TS), and if they are, what that TS is.
 
 ## Architecture
 
-The input of the model to predict connections is a tensor of deminsions $[n_{\text{inputs}}, 1, 2, 178]$, encoding both the 178 dihedrals of the starting state and the 178 dihedrals of the final state. This is put through a convolutional layer with kernel size $3\times 3$ , input channels 1, output channels 1 anf [half padding](https://github.com/vdumoulin/conv_arithmetic/tree/master) to produce another tensor of dimensions $[n_{\text{inputs}}, 1, 2, 178]$ (the convolutional layer helps directly encode local effects, importantly that there is a relation between a dihedral in the start and the same dihedral in the end state).
+The input of the model to predict connections is a tensor of dimensions $[n_{\text{inputs}}, 1, 2, 178]$, encoding both the 178 dihedrals of the starting state and the 178 dihedrals of the final state. This is put through a convolutional layer with kernel size $3\times 3$ , input channels 1, output channels 1 and [half padding](https://github.com/vdumoulin/conv_arithmetic/tree/master) to produce another tensor of dimensions $[n_{\text{inputs}}, 1, 2, 178]$ (the convolutional layer helps directly encode local effects, specifically there is a relation between a dihedral in the start and the same dihedral in the end state).
 
-The convolutional layer is then flattened to a tensor of dimensions $[n_{\text{inputs}}, 356]$, which is then put through a fully connected linear layer with 356 inputs and 356 outputs and a $\tanh$ activation function, to produce a tensor of dimensions $[n_{\text{inputs}}, 356]$. This output is then put through a linear layer with 356 inputs and 1 output, and a sigmoid activation function to get a probability of connection for each of the inputs.
+The convolutional layer is then flattened to a tensor of dimensions $[n_{\text{inputs}}, 356]$, which is then put through a fully connected linear layer with 356 inputs and 356 outputs and a $\tanh$ activation function, to produce a tensor of dimensions $[n_{\text{inputs}}, 356]$. This output is then put through a linear layer with 356 inputs and 1 output, and a sigmoid activation function to produce a probability of connection for each of the inputs.
 
 ### Training
 
 For training the loss function used is binary cross entropy loss between the predicted and actual connections.
 
-In training [droupout layers](https://arxiv.org/abs/1207.0580) are used to preventing overfitting and co-adpatation: a dropout layer with dropout rate 0.2 is used on the training inputs and a layer with dropout rate 0.6 is used between the two linear layers.
+In training [dropout layers](https://arxiv.org/abs/1207.0580) are used to preventing overfitting and co-adpatation: a dropout layer with dropout rate 0.2 is used on the training inputs and a layer with dropout rate 0.6 is used between the two linear layers.
 
-As this is obviously stochastic, the optimiser used is also a stochastic optimiser, specifically [NAdam](https://docs.rs/candle-optimisers/latest/candle_optimisers/nadam/index.html), and incorporation of Nesterov momentum into Adam.
+As this is stochastic, the optimiser used is a stochastic optimiser, specifically [NAdam](https://docs.rs/candle-optimisers/latest/candle_optimisers/nadam/index.html): an incorporation of Nesterov momentum into Adam.
 
 ## Usage
 
@@ -92,4 +92,4 @@ cargo r -r --bin eval-cx > connectpairs
 
 ## Future Work
 
-A possible direction to consider in improvements, may be rearchitecturing the network to use a transformer, in order to get the correct permutational invariance between the start and end states, better non locality for transferring the model to larger systems and to allow for the use of attention mechanisms to better encode the relations between dihedrals (see <https://huggingface.co/blog/intro-graphml> and microsofts Graphormers): there may also be some advantage in splitting the minima by amino acid type and having 20 channels in the input corresponding to the 20 amino acids, as this would allow the model to better encode the differences between amino acids (although this may need an ML architecture that can deal with sparsity better due to how sparse said encoding would be).
+A possible direction to consider for future improvements, may be rearchitecturing the network to use a transformer, in order to get the correct permutational invariance between the start and end states, better non locality for transferring the model to larger systems and to allow for the use of attention mechanisms to better encode the relations between dihedrals (see <https://huggingface.co/blog/intro-graphml> and Microsoft's Graphormers): there may also be some advantage in splitting the minima by amino acid type and having 20 channels in the input corresponding to the 20 amino acids, as this would allow the model to better encode the differences between amino acids (although this may need an ML architecture that can deal with sparsity better due to how sparse said encoding would be).
