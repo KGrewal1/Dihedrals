@@ -43,7 +43,10 @@ impl From<TransitionStates> for BTreeMap<(usize, usize), usize> {
                 (dihedral.min2, dihedral.min1)
             };
             let id = (min_1, min_2);
-            map.entry(id).or_insert(dihedral.ts);
+            let _exist = map.insert(id, dihedral.ts);
+            // if _exist.is_some() {
+            //     println!("Duplicate key: {:?}", id);
+            // }
         }
         map
     }

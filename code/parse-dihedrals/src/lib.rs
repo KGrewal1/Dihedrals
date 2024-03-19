@@ -51,7 +51,7 @@ impl From<Dihedrals> for BTreeMap<usize, Dihedral> {
         let mut map = BTreeMap::new();
         for dihedral in dihedrals.0 {
             let id = dihedral.id;
-            map.entry(id).or_insert(dihedral);
+            let _entry = map.insert(id, dihedral);
         }
         map
     }
