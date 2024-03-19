@@ -74,7 +74,7 @@ source .venv/bin/activate
 
 #### PATHSAMPLE
 
-Have a recently compiled version of PATHSAMPLE so that the dihedral data can be generated.
+Have a recently compiled version of [PATHSAMPLE](https://www-wales.ch.cam.ac.uk/PATHSAMPLE/) so that the dihedral data can be generated.
 
 ### Running
 
