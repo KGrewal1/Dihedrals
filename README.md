@@ -84,7 +84,7 @@ Have a recently compiled version of [PATHSAMPLE](https://www-wales.ch.cam.ac.uk/
 
 ```sh
 cd PATHSAMPLE
-path/to/PATHSAMPLE
+path/to/PATHSAMPLE # run PATHSAMPLE executable
 cd ..
 ```
 
