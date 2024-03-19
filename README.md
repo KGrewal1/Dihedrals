@@ -20,6 +20,10 @@ As this is stochastic, the optimiser used is a stochastic optimiser, specificall
 
 ### Setup
 
+#### PATHSAMPLE
+
+Have a recently compiled version of [PATHSAMPLE](https://www-wales.ch.cam.ac.uk/PATHSAMPLE/) so that the dihedral data can be generated.
+
 #### Rust Setup
 
 Install rust compiler:
@@ -46,13 +50,9 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-* install pytorch, following instructions at <https://pytorch.org/> using se lecting the appropriate options for your system (namely cuda version / CPU / ROCm: only tested on CUDA 12.1 however, which requires an NVIDIA GPU)
+* install pytorch, following instructions at <https://pytorch.org/> using selecting the appropriate options for your system (namely cuda version / CPU / ROCm: only tested on CUDA 12.1 however, which requires an NVIDIA GPU)
 
 * install [safetensors](https://huggingface.co/docs/safetensors/index), for (de)serialization of the data and weights
-
-#### PATHSAMPLE
-
-Have a recently compiled version of [PATHSAMPLE](https://www-wales.ch.cam.ac.uk/PATHSAMPLE/) so that the dihedral data can be generated.
 
 ### Running
 
