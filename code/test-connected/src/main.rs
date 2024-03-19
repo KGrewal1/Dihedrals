@@ -34,7 +34,7 @@ fn main() -> anyhow::Result<()> {
             .map_err(|err| anyhow!(err))?
             .into();
 
-    let (count_cx, count_ucx, count_cx_miss, count_ucx_miss) = minima
+    let (count_cx, count_ucx, count_cx_miss, count_ucx_miss): (u32, u32, u32, u32) = minima
         .par_iter()
         .enumerate()
         .flat_map(|(i, min_1)| {
