@@ -38,7 +38,7 @@ fn main() -> anyhow::Result<()> {
                 unconnected_mins.push((i, j));
                 unconnected_mins.push((j, i));
             }
-        })
+        });
     });
 
     println!("Connected: {}", connected_mins.len());
@@ -68,28 +68,28 @@ fn main() -> anyhow::Result<()> {
 
     let mut connected_mins_train: Vec<f64> = Vec::with_capacity(2 * ntrain * 2 * NDIHEDRALS);
 
-    for (i, j) in cx_train.iter() {
+    for (i, j) in cx_train {
         connected_mins_train.extend(minima.get(i).context("minima missing")?.dihedrals.iter());
         connected_mins_train.extend(minima.get(j).context("minima missing")?.dihedrals.iter());
     }
 
     let mut connected_mins_test: Vec<f64> = Vec::with_capacity(ntest_cx * 2 * NDIHEDRALS);
 
-    for (i, j) in cx_test.iter() {
+    for (i, j) in cx_test {
         connected_mins_test.extend(minima.get(i).context("minima missing")?.dihedrals.iter());
         connected_mins_test.extend(minima.get(j).context("minima missing")?.dihedrals.iter());
     }
 
     let mut unconnected_mins_train: Vec<f64> = Vec::with_capacity(ntrain * 2 * NDIHEDRALS);
 
-    for (i, j) in ucx_train.iter() {
+    for (i, j) in ucx_train {
         unconnected_mins_train.extend(minima.get(i).context("minima missing")?.dihedrals.iter());
         unconnected_mins_train.extend(minima.get(j).context("minima missing")?.dihedrals.iter());
     }
 
     let mut unconnected_mins_test: Vec<f64> = Vec::with_capacity(ntest_ucx * 2 * NDIHEDRALS);
 
-    for (i, j) in ucx_test.iter() {
+    for (i, j) in ucx_test {
         unconnected_mins_test.extend(minima.get(i).context("minima missing")?.dihedrals.iter());
         unconnected_mins_test.extend(minima.get(j).context("minima missing")?.dihedrals.iter());
     }
