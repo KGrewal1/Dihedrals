@@ -24,7 +24,7 @@ and two python files
 
 The input of the model to predict connections is a tensor of deminsions $[n_{\text{inputs}}, 1, 2, 178]$, encoding both the 178 dihedrals of the starting state and the 178 dihedrals of the final state. This is put through a convolutional layer with kernel size $3\times 3$ , input channels 1, output channels 1 anf [half padding](https://github.com/vdumoulin/conv_arithmetic/tree/master) to produce another tensor of dimensions $[n_{\text{inputs}}, 1, 2, 178]$ (the convolutional layer helps directly encode local effects, importantly that there is a relation between a dihedral in the start and the same dihedral in the end state).
 
-The convolutional layer is then flattened to a tensor of dimensions $[n_{\text{inputs}}, 356]$, which is then put through a fully connected linear layer with 356 inputs and 356 outputs and a $\tanh$ activation function, to produce a tensor of dimensions $[n_{\text{inputs}}, 356]$,. This output is then put through a linear layer with 356 inputs and 1 output, and a sigmoid activation function to get a probability of connection for each of the inputs.
+The convolutional layer is then flattened to a tensor of dimensions $[n_{\text{inputs}}, 356]$, which is then put through a fully connected linear layer with 356 inputs and 356 outputs and a $\tanh$ activation function, to produce a tensor of dimensions $[n_{\text{inputs}}, 356]$. This output is then put through a linear layer with 356 inputs and 1 output, and a sigmoid activation function to get a probability of connection for each of the inputs.
 
 ### Training
 
@@ -68,7 +68,7 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-* install pytorch, following instructions at <https://pytorch.org/> using se lecting the appropriate options for your system (namely cuda version / cpu / ROCm: only tested on CUDA 12.1 however, which requires an NVIDIA GPU)
+* install pytorch, following instructions at <https://pytorch.org/> using se lecting the appropriate options for your system (namely cuda version / CPU / ROCm: only tested on CUDA 12.1 however, which requires an NVIDIA GPU)
 
 * install [safetensors](https://huggingface.co/docs/safetensors/index), for (de)serialization of the data and weights
 
@@ -106,7 +106,7 @@ python predict_connected.py
 cargo r -r --bin eval-cx > connectpairs
 ```
 
- (this is also non deterministic due to parallelism affecting the order in which minima are put in connectpairs. The degree of parallelism can be controlled via the `RAYON_NUM_THREADS` environmental variable: by default it uses all available threads (it also does this if the variable is set to 0)): on a i7-12700K this takes about 17 s to evalaute all 9 million minima.
+ (this is also non deterministic due to parallelism affecting the order in which minima are put in connectpairs. The degree of parallelism can be controlled via the `RAYON_NUM_THREADS` environmental variable: by default it uses all available threads (it also does this if the variable is set to 0)): on a i7-12700K this takes about 17 s to evalaute all 9110046 unique pairs of minima.
 
 ## Future Work
 
