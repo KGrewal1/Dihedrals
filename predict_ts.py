@@ -86,15 +86,22 @@ def angle_mse(preds, actual):
 if __name__ == "__main__":
     # When initialzing, it will run __init__() function as above
     model = MyModel()
-    # model.load_st("weights.st")
-    model.cuda()
+
     inputs = load_file("dihedral_data.st")
 
-    train_in = inputs["traininput"].type(torch.FloatTensor).cuda()
-    train_out = inputs["trainoutput"].type(torch.FloatTensor).cuda()
+    train_in = inputs["traininput"].type(torch.FloatTensor)
+    train_out = inputs["trainoutput"].type(torch.FloatTensor)
 
-    test_in = inputs["testinput"].type(torch.FloatTensor).cuda()
-    test_out = inputs["testoutput"].type(torch.FloatTensor).cuda()
+    test_in = inputs["testinput"].type(torch.FloatTensor)
+    test_out = inputs["testoutput"].type(torch.FloatTensor)
+
+    if torch.cuda.is_available():
+        model.cuda()
+        train_in = train_in.cuda()
+        train_out = train_out.cuda()
+        test_in = test_in.cuda()
+        test_out = test_out.cuda()
+
     # define loss and parameters
     optimizer = optim.NAdam(model.parameters())
     EPOCHS = 200_000

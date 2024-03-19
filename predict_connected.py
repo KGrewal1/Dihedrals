@@ -76,18 +76,27 @@ class CxModel(nn.Module):
 if __name__ == "__main__":
     # When initialzing, it will run __init__() function as above
     model = CxModel()
-    # model.load_st("weights.st")
-    model.cuda()
+
     inputs = load_file("dihedral_class_data.st")
+    train_in = inputs["traininput"].type(torch.FloatTensor)
+    train_out = inputs["trainoutput"].type(torch.FloatTensor)
+    test_incx = inputs["testinputcx"].type(torch.FloatTensor)
+    test_inucx = inputs["testinputucx"].type(torch.FloatTensor)
 
-    train_in = inputs["traininput"].type(torch.FloatTensor).cuda()
+    if torch.cuda.is_available():
+        model.cuda()
+        train_in = train_in.cuda()
+        train_out = train_out.cuda()
+        test_incx = test_incx.cuda()
+        test_inucx = test_inucx.cuda()
+
     print(train_in.shape[0])
-    train_out = inputs["trainoutput"].type(torch.FloatTensor).cuda()
 
-    test_incx = inputs["testinputcx"].type(torch.FloatTensor).cuda()
+
+
     ntestcx = test_incx.shape[0]
     print(ntestcx)
-    test_inucx = inputs["testinputucx"].type(torch.FloatTensor).cuda()
+
     ntestucx = test_inucx.shape[0]
     print(ntestucx)
 
