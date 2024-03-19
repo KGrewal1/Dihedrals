@@ -36,6 +36,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 This presumes that the python environment is python 3: otherwise all python commands should be replaced with `python3`.
 
+Currently it is assumed training is run on a local machine, so the following instructions are for setting up a local environment (I'm not sure how to do the training as a slurm job).
+
 * `git clone` this repository and `cd` into it.
 
 * Create a virtual environment
@@ -89,7 +91,3 @@ cargo r -r --bin eval-cx > connectpairs
 ```
 
  (this is also non deterministic due to parallelism affecting the order in which minima are put in connectpairs. The degree of parallelism can be controlled via the `RAYON_NUM_THREADS` environmental variable: by default it uses all available threads (it also does this if the variable is set to 0)): on a i7-12700K this takes about 17 s to evalaute all 9110046 unique pairs of minima.
-
-## Future Work
-
-A possible direction to consider for future improvements, may be rearchitecturing the network to use a transformer, in order to get the correct permutational invariance between the start and end states, better non locality for transferring the model to larger systems and to allow for the use of attention mechanisms to better encode the relations between dihedrals (see <https://huggingface.co/blog/intro-graphml> and Microsoft's Graphormers): there may also be some advantage in splitting the minima by amino acid type and having 20 channels in the input corresponding to the 20 amino acids, as this would allow the model to better encode the differences between amino acids (although this may need an ML architecture that can deal with sparsity better due to how sparse said encoding would be).
