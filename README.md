@@ -87,7 +87,7 @@ python predict_connected.py
 * run the rust code to evaluate the model across all predictions
 
 ```sh
-cargo r -r --bin eval-cx > connectpairs
+cargo r -r --bin test-connected > connectpairs
 ```
 
  (this is also non deterministic due to parallelism affecting the order in which minima are put in connectpairs. The degree of parallelism can be controlled via the `RAYON_NUM_THREADS` environmental variable: by default it uses all available threads (it also does this if the variable is set to 0)): on a i7-12700K this takes about 17 s to evalaute all 9110046 unique pairs of minima.
