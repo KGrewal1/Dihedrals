@@ -17,16 +17,6 @@ class CxModel(nn.Module):
         super(CxModel, self).__init__()
 
         self.dropout_1 = nn.Dropout(0.2)
-        self.conv1 = nn.Conv2d(
-            in_channels=1,
-            out_channels=1,
-            kernel_size=5,
-            stride=1,
-            padding=2,
-            dilation=1,
-            groups=1,
-        )
-        self.act1 = torch.nn.Tanh()
         self.flatten = nn.Flatten(1, 3)
         self.dropout_2 = nn.Dropout(0.6)
         self.linear1 = torch.nn.Linear(356, 356)
@@ -40,9 +30,6 @@ class CxModel(nn.Module):
         Forward pass of the neural network
         """
         x = self.dropout_1(x)
-        # x = self.conv1(x)
-        # x = self.act1(x)
-        # x = self.dropout_2(x)
         x = self.flatten(x)
         x = self.linear1(x)
         x = self.act2(x)
