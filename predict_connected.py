@@ -21,7 +21,7 @@ class CxModel(nn.Module):
         self.dropout_2 = nn.Dropout(0.6)
         self.linear1 = torch.nn.Linear(356, 356)
         self.act2 = torch.nn.Tanh()
-        self.dropout_3 = nn.Dropout(0.6)
+        self.dropout_2 = nn.Dropout(0.6)
         self.linear2 = torch.nn.Linear(356, 1)
         self.sigmoid = nn.Sigmoid()
 
@@ -33,7 +33,7 @@ class CxModel(nn.Module):
         x = self.flatten(x)
         x = self.linear1(x)
         x = self.act2(x)
-        x = self.dropout_3(x)
+        x = self.dropout_2(x)
         x = self.linear2(x)
         x = self.sigmoid(x)
         return x
