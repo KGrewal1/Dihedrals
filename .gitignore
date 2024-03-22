@@ -7,3 +7,4 @@ out.txt
 *.ipynb
 /.venv
 connectpairs*
+*.png

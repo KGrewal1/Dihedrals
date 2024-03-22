@@ -1,0 +1,26 @@
+[package]
+name = "create-hist"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+parse-dihedrals = {workspace = true}
+parse-tsdata = {workspace = true}
+candle-core = {workspace = true}
+candle-nn = {workspace = true}
+connection-network = {workspace = true}
+anyhow = {workspace = true}
+log = {workspace = true}
+env_logger = {workspace = true}
+rayon = {workspace = true}
+plotters = {workspace = true}
+
+[features]
+default = []
+cuda = ["candle-core/cuda", "candle-nn/cuda"]
+cudnn = ["cuda", "candle-core/cudnn"]
+
+[lints]
+workspace = true

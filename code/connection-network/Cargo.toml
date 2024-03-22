@@ -8,6 +8,8 @@ edition = "2021"
 [dependencies]
 candle-core = {workspace = true}
 candle-nn = {workspace = true}
+log = {workspace = true}
+anyhow = {workspace = true}
 
 [lints]
 workspace = true

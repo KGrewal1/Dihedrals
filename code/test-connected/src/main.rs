@@ -59,7 +59,7 @@ fn main() -> anyhow::Result<()> {
                     // unconnected misidentified
                     if 0.5 < pred {
                         // unconnected w 'high' likelihood of being connected
-                        if 0.9999 < pred {
+                        if 0.999 < pred {
                             info!("prob {}", pred);
                             println!("{} {}", min_1, min_2);
                         }
