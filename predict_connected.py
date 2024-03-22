@@ -20,16 +20,18 @@ class CxModel(nn.Module):
         self.conv1 = nn.Conv2d(
             in_channels=1,
             out_channels=1,
-            kernel_size=3,
+            kernel_size=5,
             stride=1,
-            padding=1,
+            padding=2,
             dilation=1,
             groups=1,
         )
-        self.flatten = nn.Flatten(1, 3)
-        self.linear1 = torch.nn.Linear(356, 356)
         self.act1 = torch.nn.Tanh()
+        self.flatten = nn.Flatten(1, 3)
         self.dropout_2 = nn.Dropout(0.6)
+        self.linear1 = torch.nn.Linear(356, 356)
+        self.act2 = torch.nn.Tanh()
+        self.dropout_3 = nn.Dropout(0.6)
         self.linear2 = torch.nn.Linear(356, 1)
         self.sigmoid = nn.Sigmoid()
 
@@ -38,11 +40,13 @@ class CxModel(nn.Module):
         Forward pass of the neural network
         """
         x = self.dropout_1(x)
-        x = self.conv1(x)
+        # x = self.conv1(x)
+        # x = self.act1(x)
+        # x = self.dropout_2(x)
         x = self.flatten(x)
         x = self.linear1(x)
-        x = self.act1(x)
-        x = self.dropout_2(x)
+        x = self.act2(x)
+        x = self.dropout_3(x)
         x = self.linear2(x)
         x = self.sigmoid(x)
         return x
@@ -52,8 +56,6 @@ class CxModel(nn.Module):
         Load a state dict from a file path.
         """
         loaded = load_file(file_path)
-        self.conv1.weight = nn.Parameter(loaded["conv1.weight"])
-        self.conv1.bias = nn.Parameter(loaded["conv1.bias"])
         self.linear1.weight = nn.Parameter(loaded["ln1.weight"])
         self.linear1.bias = nn.Parameter(loaded["ln1.bias"])
         self.linear2.weight = nn.Parameter(loaded["ln2.weight"])
@@ -64,8 +66,6 @@ class CxModel(nn.Module):
         Save a state dict to a file path.
         """
         save_data = {}
-        save_data["conv1.weight"] = self.conv1.weight
-        save_data["conv1.bias"] = self.conv1.bias
         save_data["ln1.weight"] = self.linear1.weight
         save_data["ln1.bias"] = self.linear1.bias
         save_data["ln2.weight"] = self.linear2.weight
@@ -80,6 +80,7 @@ if __name__ == "__main__":
     inputs = load_file("dihedral_class_data.st")
     train_in = inputs["traininput"].type(torch.FloatTensor)
     train_out = inputs["trainoutput"].type(torch.FloatTensor)
+    train_weights = inputs["trainweights"].type(torch.FloatTensor)
     test_incx = inputs["testinputcx"].type(torch.FloatTensor)
     test_inucx = inputs["testinputucx"].type(torch.FloatTensor)
 
@@ -89,10 +90,9 @@ if __name__ == "__main__":
         train_out = train_out.cuda()
         test_incx = test_incx.cuda()
         test_inucx = test_inucx.cuda()
+        train_weights = train_weights.cuda()
 
     print(train_in.shape[0])
-
-
 
     ntestcx = test_incx.shape[0]
     print(ntestcx)
@@ -102,11 +102,11 @@ if __name__ == "__main__":
 
     # define loss and parameters
     optimizer = optim.NAdam(model.parameters())
-    EPOCHS = 20_000
+    EPOCHS = 30_000
 
     print("====Training start====")
     scheduler1 = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9)
-    lossfn = nn.BCELoss()
+    lossfn = nn.BCELoss(weight=train_weights)
     for i in range(EPOCHS):
         # set gradient to zero
         optimizer.zero_grad()
@@ -150,7 +150,7 @@ if __name__ == "__main__":
                     / (((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)) ** 0.5),
                 )
             )
-        if i % 100 == 0:
+        if i % 1000 == 0:
             scheduler1.step()
 
     print("====Training finish====")

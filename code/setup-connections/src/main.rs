@@ -44,8 +44,9 @@ fn main() -> anyhow::Result<()> {
     println!("Connected: {}", connected_mins.len());
     println!("Unconnected: {}", unconnected_mins.len());
 
-    let ntrain = 8000;
-    let ntest_cx = connected_mins.len() - ntrain;
+    let ntrain_cx = 8000;
+    let ntrain_ucx = 80_000;
+    let ntest_cx = connected_mins.len() - ntrain_cx;
     let ntest_ucx = 250_000;
 
     let mut rng: Xoshiro256StarStar = SeedableRng::seed_from_u64(42);
@@ -53,9 +54,9 @@ fn main() -> anyhow::Result<()> {
     connected_mins.shuffle(&mut rng);
     unconnected_mins.shuffle(&mut rng);
 
-    let (cx_train, cx_test) = connected_mins.split_at(ntrain);
-    let (ucx_data, _) = unconnected_mins.split_at(ntrain + ntest_ucx);
-    let (ucx_train, ucx_test) = ucx_data.split_at(ntrain);
+    let (cx_train, cx_test) = connected_mins.split_at(ntrain_cx);
+    let (ucx_data, _) = unconnected_mins.split_at(ntrain_ucx + ntest_ucx);
+    let (ucx_train, ucx_test) = ucx_data.split_at(ntrain_ucx);
     println!("cx_train: {}", cx_train.len());
     println!("cx_test: {}", cx_test.len());
     println!("ucx_train: {}", ucx_train.len());
@@ -66,7 +67,8 @@ fn main() -> anyhow::Result<()> {
         .map_err(|err| anyhow!(err))?
         .into();
 
-    let mut connected_mins_train: Vec<f64> = Vec::with_capacity(2 * ntrain * 2 * NDIHEDRALS);
+    let mut connected_mins_train: Vec<f64> =
+        Vec::with_capacity((ntrain_ucx + ntrain_cx) * 2 * NDIHEDRALS);
 
     for (i, j) in cx_train {
         connected_mins_train.extend(minima.get(i).context("minima missing")?.dihedrals.iter());
@@ -80,7 +82,7 @@ fn main() -> anyhow::Result<()> {
         connected_mins_test.extend(minima.get(j).context("minima missing")?.dihedrals.iter());
     }
 
-    let mut unconnected_mins_train: Vec<f64> = Vec::with_capacity(ntrain * 2 * NDIHEDRALS);
+    let mut unconnected_mins_train: Vec<f64> = Vec::with_capacity(ntrain_ucx * 2 * NDIHEDRALS);
 
     for (i, j) in ucx_train {
         unconnected_mins_train.extend(minima.get(i).context("minima missing")?.dihedrals.iter());
@@ -96,9 +98,14 @@ fn main() -> anyhow::Result<()> {
 
     connected_mins_train.extend(unconnected_mins_train.iter());
 
-    let mut train_vals: Vec<f64> = Vec::with_capacity(2 * ntrain);
-    train_vals.resize(ntrain, 1.0);
-    train_vals.resize(2 * ntrain, 0.0);
+    let mut train_vals: Vec<f64> = Vec::with_capacity(ntrain_cx + ntrain_ucx);
+    train_vals.resize(ntrain_cx, 1.0);
+    train_vals.resize(ntrain_cx + ntrain_ucx, 0.0);
+
+    let ratio = ntrain_ucx as f64 / ntrain_cx as f64;
+    let mut train_weights: Vec<f64> = Vec::with_capacity(ntrain_cx + ntrain_ucx);
+    train_weights.resize(ntrain_cx, ratio);
+    train_weights.resize(ntrain_cx + ntrain_ucx, 1.0);
 
     let mut test_vals_cx: Vec<f64> = Vec::with_capacity(ntest_cx);
     test_vals_cx.resize(ntest_cx, 1.0);
@@ -108,7 +115,7 @@ fn main() -> anyhow::Result<()> {
 
     let train_input = Tensor::from_slice(
         &connected_mins_train,
-        (2 * ntrain, 1, 2, NDIHEDRALS),
+        (ntrain_cx + ntrain_ucx, 1, 2, NDIHEDRALS),
         &candle_core::Device::Cpu,
     )?
     .to_dtype(candle_core::DType::F32)?;
@@ -127,8 +134,19 @@ fn main() -> anyhow::Result<()> {
     )?
     .to_dtype(candle_core::DType::F32)?;
 
-    let train_output = Tensor::from_slice(&train_vals, (2 * ntrain, 1), &candle_core::Device::Cpu)?
-        .to_dtype(candle_core::DType::F32)?;
+    let train_output = Tensor::from_slice(
+        &train_vals,
+        (ntrain_cx + ntrain_ucx, 1),
+        &candle_core::Device::Cpu,
+    )?
+    .to_dtype(candle_core::DType::F32)?;
+
+    let train_weights = Tensor::from_slice(
+        &train_weights,
+        (ntrain_cx + ntrain_ucx, 1),
+        &candle_core::Device::Cpu,
+    )?
+    .to_dtype(candle_core::DType::F32)?;
 
     let test_output_cx =
         Tensor::from_slice(&test_vals_cx, (ntest_cx, 1), &candle_core::Device::Cpu)?
@@ -142,6 +160,7 @@ fn main() -> anyhow::Result<()> {
         &HashMap::from([
             ("traininput", train_input),
             ("trainoutput", train_output),
+            ("trainweights", train_weights),
             ("testinputcx", test_input_cx),
             ("testoutputcx", test_output_cx),
             ("testinputucx", test_input_ucx),
