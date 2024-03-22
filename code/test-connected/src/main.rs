@@ -1,5 +1,6 @@
 use anyhow::anyhow;
 use candle_core::Tensor;
+use candle_nn::Module;
 use env_logger::Builder;
 use log::{info, warn, LevelFilter};
 use parse_dihedrals::{Dihedral, Dihedrals};

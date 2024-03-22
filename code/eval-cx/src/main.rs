@@ -1,4 +1,5 @@
 use anyhow::Context;
+use candle_nn::Module;
 
 mod setup_model;
 fn main() -> anyhow::Result<()> {
