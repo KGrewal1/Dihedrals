@@ -1,3 +1,9 @@
+#![allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_precision_loss,
+    clippy::cast_sign_loss,
+    clippy::range_plus_one
+)]
 use anyhow::anyhow;
 use candle_core::Tensor;
 use candle_nn::Module;
@@ -37,12 +43,11 @@ fn main() -> anyhow::Result<()> {
                 let mut angles: Vec<f64> = Vec::with_capacity(2 * NDIHEDRALS);
                 angles.extend(min_1.dihedrals.iter());
                 angles.extend(min_2.dihedrals.iter());
-                let pred = Tensor::from_slice(&angles, (1, 1, 2, NDIHEDRALS), &dev)
+                Tensor::from_slice(&angles, (1, 1, 2, NDIHEDRALS), &dev)
                     .and_then(|tensor| tensor.to_dtype(candle_core::DType::F32))
                     .and_then(|input| model.forward(&input))
                     .and_then(|pred| pred.reshape(()))
-                    .and_then(|pred| pred.to_scalar::<f32>());
-                pred
+                    .and_then(|pred| pred.to_scalar::<f32>())
             })
         })
         .collect::<Result<Vec<f32>, _>>()?;
@@ -55,9 +60,9 @@ fn main() -> anyhow::Result<()> {
     let root = BitMapBackend::new("hist.png", (1920, 1080)).into_drawing_area();
     root.fill(&WHITE)?;
     let mut chart = ChartBuilder::on(&root)
-        .x_label_area_size(60)
-        .y_label_area_size(80)
-        .margin(20)
+        .x_label_area_size(90)
+        .y_label_area_size(110)
+        .margin(30)
         .caption("Frequency of Predictions", ("sans-serif", 50.0))
         .build_cartesian_2d(0u32..nbuckets + 1, 0f64..0.8)?;
 
@@ -69,8 +74,8 @@ fn main() -> anyhow::Result<()> {
         .y_label_formatter(&|y| format!("{:.0}%", (*y * 100.0) as u32))
         .y_desc("Frequency")
         .x_desc("Probability of Connection")
-        .label_style(("sans-serif", 20))
-        .axis_desc_style(("sans-serif", 30))
+        .label_style(("sans-serif", 30))
+        .axis_desc_style(("sans-serif", 40))
         .draw()?;
 
     let hist = Histogram::vertical(&chart)
@@ -87,9 +92,9 @@ fn main() -> anyhow::Result<()> {
     let root = BitMapBackend::new("hist2.png", (1920, 1080)).into_drawing_area();
     root.fill(&WHITE)?;
     let mut chart = ChartBuilder::on(&root)
-        .x_label_area_size(60)
-        .y_label_area_size(80)
-        .margin(20)
+        .x_label_area_size(90)
+        .y_label_area_size(110)
+        .margin(30)
         .caption("Frequency of Predictions", ("sans-serif", 50.0))
         .build_cartesian_2d(0u32..nbuckets + 1, 0f64..0.005)?;
 
@@ -101,8 +106,8 @@ fn main() -> anyhow::Result<()> {
         .y_label_formatter(&|y| format!("{:.1}%", (*y * 100.0)))
         .y_desc("Frequency")
         .x_desc("Probability of Connection")
-        .label_style(("sans-serif", 20))
-        .axis_desc_style(("sans-serif", 30))
+        .label_style(("sans-serif", 30))
+        .axis_desc_style(("sans-serif", 40))
         .draw()?;
 
     let hist = Histogram::vertical(&chart)
