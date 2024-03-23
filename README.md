@@ -4,9 +4,11 @@ This repository contains rust and python code to predict whether two dihedral co
 
 ## Architecture
 
-The input of the model to predict connections is a tensor of dimensions $[n_{\text{inputs}}, 1, 2, 178]$, encoding both the 178 dihedrals of the starting state and the 178 dihedrals of the final state. This is put through a convolutional layer with kernel size $3\times 3$ , input channels 1, output channels 1 and [half padding](https://github.com/vdumoulin/conv_arithmetic/tree/master) to produce another tensor of dimensions $[n_{\text{inputs}}, 1, 2, 178]$ (the convolutional layer helps directly encode local effects, specifically there is a relation between a dihedral in the start and the same dihedral in the end state).
+The input of the model to predict connections is a tensor of dimensions $[n_{\text{inputs}}, 1, 2, 178]$, encoding both the 178 dihedrals of the starting state and the 178 dihedrals of the final state.
 
-The convolutional layer is then flattened to a tensor of dimensions $[n_{\text{inputs}}, 356]$, which is then put through a fully connected linear layer with 356 inputs and 356 outputs and a $\tanh$ activation function, to produce a tensor of dimensions $[n_{\text{inputs}}, 356]$. This output is then put through a linear layer with 356 inputs and 1 output, and a sigmoid activation function to produce a probability of connection for each of the inputs.
+<!-- This is put through a convolutional layer with kernel size $3\times 3$ , input channels 1, output channels 1 and [half padding](https://github.com/vdumoulin/conv_arithmetic/tree/master) to produce another tensor of dimensions $[n_{\text{inputs}}, 1, 2, 178]$ (the convolutional layer helps directly encode local effects, specifically there is a relation between a dihedral in the start and the same dihedral in the end state). -->
+
+This us flattened to a tensor of dimensions $[n_{\text{inputs}}, 356]$, which is then put through a fully connected linear layer with 356 inputs and 356 outputs and a $\tanh$ activation function, to produce a tensor of dimensions $[n_{\text{inputs}}, 356]$. This output is then put through a linear layer with 356 inputs and 1 output, and a sigmoid activation function to produce a probability of connection for each of the inputs.
 
 ### Training
 
