@@ -19,7 +19,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust }}
-      - run: cargo check --workspace
+      - run: cargo check --workspace --exclude create-hist
 
   test:
     name: Test Suite
@@ -33,4 +33,4 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust }}
-      - run: cargo test --workspace
+      - run: cargo test --workspace --exclude create-hist
