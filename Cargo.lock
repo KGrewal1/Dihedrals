@@ -1230,6 +1230,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "select-random"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "env_logger",
+ "log",
+ "parse-dihedrals",
+ "parse-tsdata",
+ "rand",
+ "rand_xoshiro",
+]
+
+[[package]]
 name = "semver"
 version = "1.0.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"

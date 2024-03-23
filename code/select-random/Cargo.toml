@@ -1,0 +1,19 @@
+[package]
+name = "select-random"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+parse-dihedrals = {workspace = true}
+parse-tsdata = {workspace = true}
+rand = {workspace = true}
+rand_xoshiro = {workspace = true}
+anyhow = {workspace = true}
+bytemuck = {workspace = true}
+log = {workspace = true}
+env_logger = {workspace = true}
+
+[lints]
+workspace = true

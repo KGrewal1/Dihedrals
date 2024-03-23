@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 members = [ "code/connection-network", "code/create-hist", "code/dihedrals2csv", "code/eval-cx","code/parse-dihedrals"
-, "code/parse-tsdata", "code/setup-connections", "code/setup-train", "code/test-connected", "code/train"]
+, "code/parse-tsdata", "code/select-random", "code/setup-connections", "code/setup-train", "code/test-connected", "code/train"]
 
 [workspace.dependencies]
 parse-dihedrals = {path = "code/parse-dihedrals"}
