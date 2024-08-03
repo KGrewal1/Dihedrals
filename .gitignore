@@ -7,4 +7,6 @@ out.txt
 *.ipynb
 /.venv
 connectpairs*
-*.png
+*.png# pixi environments
+.pixi
+*.egg-info
