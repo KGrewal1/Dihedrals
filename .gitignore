@@ -10,3 +10,5 @@ connectpairs*
 *.png# pixi environments
 .pixi
 *.egg-info
+wales/*
+*.bz2
